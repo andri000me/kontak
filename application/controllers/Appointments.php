@@ -446,13 +446,18 @@ class Appointments extends CI_Controller {
         try
         {
             $post_data = $this->input->post('post_data'); // alias
+
+            $post_data = json_decode($post_data, true);
             $post_data['manage_mode'] = filter_var($post_data['manage_mode'], FILTER_VALIDATE_BOOLEAN);
+
+            // die(var_dump($_FILES['file_data']));
 
             $this->load->model('appointments_model');
             $this->load->model('providers_model');
             $this->load->model('services_model');
             $this->load->model('customers_model');
             $this->load->model('settings_model');
+            $this->load->model('userregisters_model');
 
             // Validate the CAPTCHA string.
             if ($this->settings_model->get_setting('require_captcha') === '1'
@@ -467,13 +472,16 @@ class Appointments extends CI_Controller {
             }
 
             // Check appointment availability.
-            if ( ! $this->_check_datetime_availability())
+            if ( ! $this->_check_datetime_availability($post_data))
             {
                 throw new Exception($this->lang->line('requested_hour_is_unavailable'));
             }
 
-            $appointment = $_POST['post_data']['appointment'];
-            $customer = $_POST['post_data']['customer'];
+            $appointment = $post_data['appointment'];
+            $customer = $post_data['customer'];
+
+            $file_ktp = $this->upload_file_ktp($_FILES['file_ktp'], $customer);
+            $customer['ktp_img'] = $file_ktp;
 
             if ($this->customers_model->exists($customer))
             {
@@ -481,20 +489,60 @@ class Appointments extends CI_Controller {
             }
 
             $customer_id = $this->customers_model->add($customer);
+            
+            $file_upload = $this->upload_file_pemohon($_FILES['file_data'], $customer);
+
             $appointment['id_users_customer'] = $customer_id;
             $appointment['is_unavailable'] = (int)$appointment['is_unavailable']; // needs to be type casted
+            $appointment['status'] = 0;
+            $appointment['surat_permohonan'] = $file_upload;
             $appointment['id'] = $this->appointments_model->add($appointment);
             $appointment['hash'] = $this->appointments_model->get_value('hash', $appointment['id']);
 
+            // membuat user login
+            // $data_register = $this->userregisters_model->get_where(['ea_user_id' => $appointment['id_users_customer']], true);
+            // if (empty($data_register)) {
+
+            //     $username = explode(' ', $customer['first_name']);
+            //     $username = strtolower($username[0]).'_'.$customer_id;
+
+            //     $this->load->helper('general_helper');
+
+            //     $salt = generate_salt();
+
+            //     $user_register = [
+            //         'name' => $customer['first_name'],
+            //         'username' => $username,
+            //         'password' => hash_password($salt, $username),
+            //         'salt' => $salt,
+            //         'email' => $customer['email'],
+            //         'no_handphone' => $customer['phone_number'],
+            //         'user_level_id' => 3,
+            //         'ea_user_id' => $appointment['id_users_customer'],
+            //         'status' => 1,
+            //     ];
+                
+            //     $this->userregisters_model->add($user_register);
+            // }
+
             $provider = $this->providers_model->get_row($appointment['id_users_provider']);
             $service = $this->services_model->get_row($appointment['id_services']);
+
+            // $user_register = $this->userregisters_model->get_row($appointment['id_users_customer']);
+            // $customer['user_register'] = false;
+            // if (!empty($user_register)) {
+            //     $customer['user_register'] = true;
+            //     $customer['username'] = $user_register['username'];
+            //     $customer['password'] = $user_register['username'];
+            // }
 
             $company_settings = [
                 'company_name' => $this->settings_model->get_setting('company_name'),
                 'company_link' => $this->settings_model->get_setting('company_link'),
                 'company_email' => $this->settings_model->get_setting('company_email'),
                 'date_format' => $this->settings_model->get_setting('date_format'),
-                'time_format' => $this->settings_model->get_setting('time_format')
+                'time_format' => $this->settings_model->get_setting('time_format'),
+                'registration_link' => $this->settings_model->get_setting('registration_link'),
             ];
 
             // :: SYNCHRONIZE APPOINTMENT WITH PROVIDER'S GOOGLE CALENDAR
@@ -708,12 +756,12 @@ class Appointments extends CI_Controller {
      *
      * @return bool Returns whether the selected datetime is still available.
      */
-    protected function _check_datetime_availability()
+    protected function _check_datetime_availability($post_data)
     {
         $this->load->model('services_model');
         $this->load->model('appointments_model');
 
-        $appointment = $_POST['post_data']['appointment'];
+        $appointment = $post_data['appointment'];
 
         $service_duration = $this->services_model->get_value('duration', $appointment['id_services']);
 
@@ -742,7 +790,7 @@ class Appointments extends CI_Controller {
         {
             $appointment['id_users_provider'] = $this->_search_any_provider($appointment['id_services'],
                 date('Y-m-d', strtotime($appointment['start_datetime'])));
-            $_POST['post_data']['appointment']['id_users_provider'] = $appointment['id_users_provider'];
+            $post_data['appointment']['id_users_provider'] = $appointment['id_users_provider'];
             return TRUE; // The selected provider is always available.
         }
 
@@ -1289,5 +1337,57 @@ class Appointments extends CI_Controller {
         }
 
         return $periods;
+    }
+
+    public function upload_file_pemohon($data, $customer)
+    {
+        $path_file = config_item('storage_upload_path').'surat_pemohon/';            
+        create_folder($path_file);
+
+        $file_name = preg_replace('/\s+/', '_', strtolower($customer['first_name'].'_'.$customer['last_name'].'_'.date('YmdHis')));
+
+        $config_pdf['upload_path']   = $path_file;
+        $config_pdf['file_name']     = $file_name;
+        $config_pdf['max_size']      = 2500;
+
+        $this->load->library('upload', $config_pdf);
+        
+        $config_pdf['allowed_types'] = 'pdf|PDF';
+        $this->upload->initialize($config_pdf);
+
+        if ( ! $this->upload->do_upload('file_data')){
+            $fail = array('error' => $this->upload->display_errors());
+            throw new Exception('Ukuran file surat permohonan terlalu besar. '.$fail['error']);
+        }
+        else{
+            $data = array('upload_data' => $this->upload->data());
+            return $data['upload_data']['file_name'];
+        }
+    }
+
+    public function upload_file_ktp($data, $customer)
+    {
+        $path_file = config_item('storage_upload_path').'ktp/';            
+        create_folder($path_file);
+
+        $file_name = 'ktp_'.preg_replace('/\s+/', '_', strtolower($customer['first_name'].'_'.date('YmdHis')));
+
+        $config_ktp['upload_path']   = $path_file;
+        $config_ktp['file_name']     = $file_name;
+        $config_ktp['max_size']      = 2500;
+
+        $this->load->library('upload', $config_ktp);
+        
+        $config_ktp['allowed_types'] = 'jpg|JPG|png|PNG|jpeg|JPEG';
+        $this->upload->initialize($config_ktp);
+        
+        if ( ! $this->upload->do_upload('file_ktp')){
+            $fail = array('error' => $this->upload->display_errors());
+            throw new Exception('Ukuran file KTP terlalu besar. '.$fail['error']);
+        }
+        else{
+            $data = array('upload_data' => $this->upload->data());
+            return $data['upload_data']['file_name'];
+        }
     }
 }

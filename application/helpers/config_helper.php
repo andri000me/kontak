@@ -24,3 +24,12 @@ function config($key)
 
     return $framework->config->item($key);
 }
+
+function create_folder($path)
+{
+    if (!is_dir($path)) {
+        $old = umask(0);
+        mkdir($path, 0777, true);
+        umask($old);
+    }
+}

@@ -121,19 +121,34 @@ window.FrontendBookApi = window.FrontendBookApi || {};
             }
         }
 
-        var formData = jQuery.parseJSON($('input[name="post_data"]').val());
-        var postData = {
-            csrfToken: GlobalVariables.csrfToken,
-            post_data: formData
-        };
+        var formData  = jQuery.parseJSON($('input[name="post_data"]').val());
+        var file_data = $('#upload_pemohon').prop('files')[0];  
+        var file_ktp  = $('#upload_ktp').prop('files')[0];  
+
+        var postData = new FormData();
+        
+        postData.append('post_data', $('input[name="post_data"]').val());
+        postData.append('csrfToken', GlobalVariables.csrfToken);
+        postData.append('file_data', file_data);
+        postData.append('file_ktp', file_ktp);
+
+        // var postData = {
+        //     csrfToken: GlobalVariables.csrfToken,
+        //     post_data: formData,
+        //     // file_data: file_data,
+        // };
 
         if ($captchaText.length > 0) {
-            postData.captcha = $captchaText.val();
+            // postData.captcha = $captchaText.val();
+            postData.append('captcha', $captchaText.val());
         }
 
         if (GlobalVariables.manageMode) {
-            postData.exclude_appointment_id = GlobalVariables.appointmentData.id;
+            // postData.exclude_appointment_id = GlobalVariables.appointmentData.id;
+            postData.append('exclude_appointment_id', GlobalVariables.appointmentData.id);
         }
+
+        console.log(postData);
 
         var postUrl = GlobalVariables.baseUrl + '/index.php/appointments/ajax_register_appointment';
         var $layer = $('<div/>');
@@ -143,6 +158,8 @@ window.FrontendBookApi = window.FrontendBookApi || {};
             method: 'post',
             data: postData,
             dataType: 'json',
+            processData : false,
+            contentType : false,
             beforeSend: function (jqxhr, settings) {
                 $layer
                     .appendTo('body')

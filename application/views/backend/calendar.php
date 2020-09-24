@@ -17,6 +17,7 @@
         'availableProviders'    : <?= json_encode($available_providers) ?>,
         'availableServices'     : <?= json_encode($available_services) ?>,
         'baseUrl'               : <?= json_encode($base_url) ?>,
+        'storageUrl'            : <?= json_encode(config('storage_upload_path')) ?>,
         'bookAdvanceTimeout'    : <?= $book_advance_timeout ?>,
         'dateFormat'            : <?= json_encode($date_format) ?>,
         'timeFormat'            : <?= json_encode($time_format) ?>,
@@ -173,6 +174,13 @@
                                     <label for="select-provider" class="control-label"><?= lang('provider') ?> *</label>
                                     <select id="select-provider" class="required form-control"></select>
                                 </div>
+                                
+                                <div class="form-group">
+                                    <label for="appointment-notes" class="control-label"><?= lang('notes') ?></label>
+                                    <textarea id="appointment-notes" class="form-control" rows="2"></textarea>
+                                </div>
+
+                                
                             </div>
 
                             <div class="col-xs-12 col-sm-6">
@@ -185,15 +193,27 @@
                                     <label for="end-datetime" class="control-label"><?= lang('end_date_time') ?></label>
                                     <input id="end-datetime" class="required form-control">
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6">
+                                <!-- <div class="form-group">
+                                    <label for="surat-pemohon" class="control-label"><?= lang('surat_pemohon') ?></label>
+                                    <a href="" class="form-control btn btn-primary">Lihat surat pemohon</a>
+                                </div> -->
+                                
                                 <div class="form-group">
-                                    <label for="appointment-notes" class="control-label"><?= lang('notes') ?></label>
-                                    <textarea id="appointment-notes" class="form-control" rows="2"></textarea>
+                                    <label for="jml-peserta" class="control-label"><?= lang('jumlah_peserta') ?></label>
+                                    <input id="jml-peserta" class=" form-control">
                                 </div>
+                                
+                                <div class="form-group">
+                                    <label for="status" class="control-label"><?= lang('status') ?></label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="0">Diajukan</option>
+                                        <option value="1">Diterima</option>
+                                        <option value="2">Diundur</option>
+                                        <option value="3">Ditolak</option>
+                                    </select>
+                                </div>
+    
                             </div>
                         </div>
                     </fieldset>

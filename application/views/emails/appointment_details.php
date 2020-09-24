@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Appointment Details</title>
+    <title>Rincian Permohonan</title>
 </head>
 <body style="font: 13px arial, helvetica, tahoma;">
     <div class="email-container" style="width: 650px; border: 1px solid #eee;">
@@ -15,7 +15,7 @@
             <h2>$email_title</h2>
             <p>$email_message</p>
 
-            <h2>Appointment Details</h2>
+            <h2>Rincian Permohonan</h2>
             <table id="appointment-details">
                 <tr>
                     <td class="label" style="padding: 3px;font-weight: bold;">Service</td>
@@ -35,7 +35,7 @@
                 </tr>
             </table>
 
-            <h2>Customer Details</h2>
+            <h2>Rincian Pemohon</h2>
             <table id="customer-details">
                 <tr>
                     <td class="label" style="padding: 3px;font-weight: bold;">Name</td>
@@ -55,7 +55,23 @@
                 </tr>
             </table>
 
-            <h2>Appointment Link</h2>
+            <!--<h3>Daftarkan Peserta di link berikut</h3>-->
+            <!--<table id="">-->
+            <!--    <tr>-->
+            <!--        <td class="label" style="padding: 3px;font-weight: bold;">Link</td>-->
+            <!--        <td style="padding: 3px;"><a href="$registration_link" style="width: 600px;">$registration_link</a></td>-->
+            <!--    </tr>-->
+            <!--    <tr>-->
+            <!--        <td class="label" style="padding: 3px;font-weight: bold;">Username</td>-->
+            <!--        <td style="padding: 3px;">$customer_username</td>-->
+            <!--    </tr>-->
+            <!--    <tr>-->
+            <!--        <td class="label" style="padding: 3px;font-weight: bold;">Password</td>-->
+            <!--        <td style="padding: 3px;">$customer_password</td>-->
+            <!--    </tr>-->
+            <!--</table>-->
+
+            <h2>Tautan Permohonan</h2>
             <a href="$appointment_link" style="width: 600px;">$appointment_link</a>
         </div>
 

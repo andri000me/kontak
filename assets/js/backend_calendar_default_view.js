@@ -73,6 +73,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 $dialog.find('#appointment-id').val(appointment.id);
                 $dialog.find('#select-service').val(appointment.id_services).trigger('change');
                 $dialog.find('#select-provider').val(appointment.id_users_provider);
+                $dialog.find('#jml-peserta').val(appointment.jml_peserta);
+                $dialog.find('#status').val(appointment.status);
 
                 // Set the start and end datetime of the appointment.
                 var startDatetime = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss');
@@ -304,9 +306,36 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             displayDelete = (GlobalVariables.user.privileges.appointments.delete == true)
                 ? '' : 'hide';
 
+            var status = '';
+            if (event.data.status == 1) {
+                status = 'Diterima';
+            } else if (event.data.status == 2) {
+                status = 'Diundur';
+            } else if (event.data.status == 3) {
+                status = 'Ditolak';
+            } else {
+                status = 'Diajukan';
+            }
+
+            var surat_permohonan = '<br>' +
+                                    '<strong>' + EALang.surat_pemohon + '</strong> '
+                                    + '<a target="_blank" href="'+ GlobalVariables.baseUrl + '/storage/uploads/surat_pemohon/' + event.data.surat_permohonan + '" class="btn btn-info btn-xs">Lihat surat permohonan</a>' ;
+
+            if (!event.data.surat_permohonan) {
+                surat_permohonan = '';
+            }
+
+            var ktp_img = '<br>' +
+                                    '<strong>' + EALang.ktp + '</strong> '
+                                    + '<a target="_blank" href="'+ GlobalVariables.baseUrl + '/storage/uploads/ktp/' + event.data.customer.ktp_img + '" class="btn btn-info btn-xs">Lihat KTP</a>' ;
+
+            if (!event.data.customer.ktp_img) {
+                ktp_img = '';
+            }
+
             html =
                 '<style type="text/css">'
-                + '.popover-content strong {min-width: 80px; display:inline-block;}'
+                + '.popover-content strong {min-width: 100px; display:inline-block;}'
                 + '.popover-content button {margin-right: 10px;}'
                 + '</style>' +
                 '<strong>' + EALang.start + '</strong> '
@@ -326,11 +355,22 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 + event.data.customer.first_name + ' '
                 + event.data.customer.last_name
                 + '<br>' +
+                '<strong>' + EALang.id_nomor + '</strong> '
+                + event.data.customer.ktp_nomor
+                + ktp_img 
+                + '<br>' +
                 '<strong>' + EALang.email + '</strong> '
                 + event.data.customer.email
                 + '<br>' +
                 '<strong>' + EALang.phone_number + '</strong> '
                 + event.data.customer.phone_number
+                + '<br>' +
+                '<strong>' + EALang.jumlah_peserta + '</strong> '
+                + event.data.jml_peserta
+                + surat_permohonan 
+                + '<br>' +
+                '<strong>' + EALang.status + '</strong> '
+                + status
                 + '<hr>' +
                 '<div class="text-center">' +
                 '<button class="edit-popover btn btn-primary ' + displayEdit + '">' + EALang.edit + '</button>' +
@@ -345,7 +385,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             content: html,
             html: true,
             container: '#calendar',
-            trigger: 'manual'
+            trigger: 'manual',
         });
 
         lastFocusedEventData = event;
@@ -355,6 +395,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         // Fix popover position.
         if ($('.popover').length > 0 && $('.popover').position().top < 200) {
             $('.popover').css('top', '200px');
+            // $('.popover').css({top: '200px', minWidth: '360px', maxWidth: '720px'});
         }
     }
 

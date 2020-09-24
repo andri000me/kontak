@@ -30,17 +30,19 @@ class Config {
     // GENERAL SETTINGS
     // ------------------------------------------------------------------------
 
-    const BASE_URL      = 'https://pt-bandung.go.id/kontak';
+    const BASE_URL      = '//kontak.pt-bandung.go.id';
+    // const BASE_URL      = 'https://pt-bandung.go.id/kontak';
     const LANGUAGE      = 'english';
-    const DEBUG_MODE    = FALSE;
+    const DEBUG_MODE    = false;
+    const DIR_NAME      = '/pt-bandung';
 
     // ------------------------------------------------------------------------
     // DATABASE SETTINGS
     // ------------------------------------------------------------------------
 
     const DB_HOST       = 'localhost';
-    const DB_NAME       = 'db_sipa';
-    const DB_USERNAME   = 'root';
+    const DB_NAME       = 'kont_db_sipa';
+    const DB_USERNAME   = 'kont_root';
     const DB_PASSWORD   = 'korbelius';
 
     // ------------------------------------------------------------------------
@@ -52,6 +54,11 @@ class Config {
     const GOOGLE_CLIENT_ID      = '';
     const GOOGLE_CLIENT_SECRET  = '';
     const GOOGLE_API_KEY        = '';
+
+    // ------------------------------------------------------------------------
+    // LOCAL STORAGE PATH
+    // ------------------------------------------------------------------------
+    // const STORAGE_PATH_UPLOAD = $_SERVER['DOCUMENT_ROOT'].'/storage/uploads/';
 }
 
 /* End of file config.php */

@@ -131,6 +131,16 @@ class Email {
                 throw new \Exception('Invalid time_format value: ' . $company['time_format']);
         }
 
+        // $username = '';
+        // $password = '';
+        // $registration_link = '';
+        // if ($customer['user_register']) {
+            
+        //     $username = $customer['username'];
+        //     $password = $customer['password'];
+        //     $registration_link = $company['registration_link'];
+        // }
+
         // Prepare template replace array.
         $replaceArray = [
             '$email_title' => $title->get(),
@@ -146,6 +156,11 @@ class Email {
             '$customer_email' => $customer['email'],
             '$customer_phone' => $customer['phone_number'],
             '$customer_address' => $customer['address'],
+            
+            // '$customer_user_register' => $customer['user_register'],
+            // '$customer_username' => $username,
+            // '$customer_password' => $password,
+            // '$registration_link' => $registration_link,
 
             // Translations
             'Appointment Details' => $this->framework->lang->line('appointment_details_title'),
@@ -158,7 +173,7 @@ class Email {
             'Email' => $this->framework->lang->line('email'),
             'Phone' => $this->framework->lang->line('phone'),
             'Address' => $this->framework->lang->line('address'),
-            'Appointment Link' => $this->framework->lang->line('appointment_link_title')
+            'Appointment Link' => $this->framework->lang->line('appointment_link_title'),
         ];
 
         $html = file_get_contents(__DIR__ . '/../../application/views/emails/appointment_details.php');

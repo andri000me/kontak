@@ -11,6 +11,7 @@
 $config['version'] = '1.3.2'; // This must be changed manually.
 $config['release_label'] = ''; // Leave empty for no title or add Alpha, Beta etc ...
 $config['google_sync_feature'] = Config::GOOGLE_SYNC_FEATURE;
+$config['storage_upload_path'] = $_SERVER['DOCUMENT_ROOT'].'/storage/uploads/';
 
 /*
 |--------------------------------------------------------------------------

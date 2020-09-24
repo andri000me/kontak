@@ -529,10 +529,14 @@ window.FrontendBook = window.FrontendBook || {};
         var address = GeneralFunctions.escapeHtml($('#address').val());
         var city = GeneralFunctions.escapeHtml($('#city').val());
         var zipCode = GeneralFunctions.escapeHtml($('#zip-code').val());
+        var jmlPeserta = GeneralFunctions.escapeHtml($('#jml-peserta').val());
+        var ktpNomor = GeneralFunctions.escapeHtml($('#ktp_nomor').val());
 
         html =
             '<h4>' + firstName + ' ' + lastName + '</h4>' +
             '<p>' +
+            EALang.id_nomor + ': ' + ktpNomor +
+            '<br/>' +
             EALang.phone + ': ' + phoneNumber +
             '<br/>' +
             EALang.email + ': ' + email +
@@ -542,6 +546,8 @@ window.FrontendBook = window.FrontendBook || {};
             EALang.city + ': ' + city +
             '<br/>' +
             EALang.zip_code + ': ' + zipCode +
+            '<br/>' +
+            EALang.jumlah_peserta + ': ' + jmlPeserta +
             '</p>';
 
         $('#customer-details').html(html);
@@ -557,7 +563,8 @@ window.FrontendBook = window.FrontendBook || {};
             phone_number: $('#phone-number').val(),
             address: $('#address').val(),
             city: $('#city').val(),
-            zip_code: $('#zip-code').val()
+            zip_code: $('#zip-code').val(),
+            ktp_nomor: $('#ktp_nomor').val()
         };
 
         postData.appointment = {
@@ -567,7 +574,8 @@ window.FrontendBook = window.FrontendBook || {};
             notes: $('#notes').val(),
             is_unavailable: false,
             id_users_provider: $('#select-provider').val(),
-            id_services: $('#select-service').val()
+            id_services: $('#select-service').val(),
+            jml_peserta: $('#jml-peserta').val()
         };
 
         postData.manage_mode = FrontendBook.manageMode;

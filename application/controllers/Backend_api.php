@@ -261,6 +261,7 @@ class Backend_api extends CI_Controller {
             $this->load->model('services_model');
             $this->load->model('customers_model');
             $this->load->model('settings_model');
+            $this->load->model('userregisters_model');
 
             // :: SAVE CUSTOMER CHANGES TO DATABASE
             if ($this->input->post('customer_data'))
@@ -300,6 +301,37 @@ class Backend_api extends CI_Controller {
                 }
 
                 $appointment['id'] = $this->appointments_model->add($appointment);
+
+            }
+            
+            // untuk mengirimkan data user login ke aplikasi register
+            // membuat user login jika status diterima/diundur
+            if ($appointment['status'] == 1 || $appointment['status'] == 2) {
+
+                $data_register = $this->userregisters_model->get_where(['ea_user_id' => $appointment['id_users_customer']], true);
+                if (empty($data_register)) {
+
+                    $username = explode(' ', $customer['first_name']);
+                    $username = strtolower($username[0]).'_'.$customer['id'];
+
+                    $this->load->helper('general_helper');
+
+                    $salt = generate_salt();
+
+                    $user_register = [
+                        'name' => $customer['first_name'],
+                        'username' => $username,
+                        'password' => hash_password($salt, $username),
+                        'salt' => $salt,
+                        'email' => $customer['email'],
+                        'no_handphone' => $customer['phone_number'],
+                        'user_level_id' => 3,
+                        'ea_user_id' => $appointment['id_users_customer'],
+                        'status' => 1,
+                    ];
+                    
+                    $this->userregisters_model->add($user_register);
+                }
             }
 
             $appointment = $this->appointments_model->get_row($appointment['id']);
@@ -307,12 +339,21 @@ class Backend_api extends CI_Controller {
             $customer = $this->customers_model->get_row($appointment['id_users_customer']);
             $service = $this->services_model->get_row($appointment['id_services']);
 
+            $user_register = $this->userregisters_model->get_row($appointment['id_users_customer']);
+            $customer['user_register'] = false;
+            if (!empty($user_register)) {
+                $customer['user_register'] = true;
+                $customer['username'] = $user_register['username'];
+                $customer['password'] = $user_register['username'];
+            }
+
             $company_settings = [
                 'company_name' => $this->settings_model->get_setting('company_name'),
                 'company_link' => $this->settings_model->get_setting('company_link'),
                 'company_email' => $this->settings_model->get_setting('company_email'),
                 'date_format' => $this->settings_model->get_setting('date_format'),
-                'time_format' => $this->settings_model->get_setting('time_format')
+                'time_format' => $this->settings_model->get_setting('time_format'),
+                'registration_link' => $this->settings_model->get_setting('registration_link'),
             ];
 
             // :: SYNC APPOINTMENT CHANGES WITH GOOGLE CALENDAR

@@ -214,6 +214,14 @@
                                     <input type="text" id="first-name" class="required form-control" maxlength="100" />
                                 </div>
                                 <div class="form-group">
+                                    <label for="first-name" class="control-label"><?= lang('id_nomor') ?> *</label>
+                                    <input type="text" id="ktp_nomor" class="required form-control" maxlength="100" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="first-name" class="control-label"><?= lang('upload_ktp') ?> *</label>
+                                    <input type="file" id="upload_ktp" name="upload_ktp" accept="image/jpg,image/png,image/jpeg" class="required form-control" />
+                                </div>
+                                <div class="form-group">
                                     <label for="last-name" class="control-label"><?= lang('last_name') ?> *</label>
                                     <input type="text" id="last-name" class="required form-control" maxlength="120" />
                                 </div>
@@ -241,9 +249,18 @@
                                     <input type="text" id="zip-code" class="form-control" maxlength="120" />
                                 </div>
                                 <div class="form-group">
+                                    <label for="jml-peserta" class="control-label"><?= lang('jumlah_peserta') ?> *</label>
+                                    <input type="text" id="jml-peserta" class="required form-control" maxlength="5" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="upload_pemohon" class="control-label"><?= lang('upload_pemohon') ?> *</label>
+                                    <input type="file" id="upload_pemohon" name="upload_pemohon" accept="application/pdf" class="required form-control" />
+                                </div>
+                                <div class="form-group">
                                     <label for="notes" class="control-label"><?= lang('notes') ?></label>
                                     <textarea id="notes" maxlength="500" class="form-control" rows="3"></textarea>
                                 </div>
+                                
                             </div>
 
                             <?php if ($display_terms_and_conditions): ?>
@@ -298,6 +315,7 @@
                             <div id="appointment-details" class="col-xs-12 col-sm-6"></div>
                             <div id="customer-details" class="col-xs-12 col-sm-6"></div>
                         </div>
+
                         <?php if ($this->settings_model->get_setting('require_captcha') === '1'): ?>
                         <div class="frame-content row">
                             <div class="col-xs-12 col-sm-6">
@@ -364,6 +382,7 @@
             availableServices   : <?= json_encode($available_services) ?>,
             availableProviders  : <?= json_encode($available_providers) ?>,
             baseUrl             : <?= json_encode(config('base_url')) ?>,
+            storageUrl          : <?= json_encode(config('storage_upload_path')) ?>,
             manageMode          : <?= $manage_mode ? 'true' : 'false' ?>,
             customerToken       : <?= json_encode($customer_token) ?>,
             dateFormat          : <?= json_encode($date_format) ?>,

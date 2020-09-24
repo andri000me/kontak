@@ -58,7 +58,9 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 start_datetime: startDatetime,
                 end_datetime: endDatetime,
                 notes: $dialog.find('#appointment-notes').val(),
-                is_unavailable: false
+                is_unavailable: false,
+                status: $('#status').val(),
+                jml_peserta: $('#jml-peserta').val(),
             };
 
             if ($dialog.find('#appointment-id').val() !== '') {
